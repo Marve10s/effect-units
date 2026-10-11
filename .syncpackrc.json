@@ -1,5 +1,12 @@
 {
   "$schema": "./node_modules/syncpack/schema.json",
+  "versionGroups": [
+    {
+      "label": "Effect's supported peer minimum is independent of the development pin",
+      "dependencies": ["effect"],
+      "dependencyTypes": ["peer"]
+    }
+  ],
   "semverGroups": [
     {
       "label": "devDependencies must be exact pins (no semver range prefix)",

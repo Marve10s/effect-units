@@ -15,6 +15,7 @@ const project = join(import.meta.dirname, "..");
 const manifest = JSON.parse(
   readFileSync(join(project, "package.json"), "utf8"),
 );
+const effectVersion = process.argv[2] ?? manifest.devDependencies.effect;
 const consumer = mkdtempSync(join(tmpdir(), "effect-units-consumer-"));
 
 try {
@@ -35,7 +36,7 @@ try {
       type: "module",
       dependencies: {
         "effect-units": `file:./${tarballs[0]}`,
-        effect: manifest.devDependencies.effect,
+        effect: effectVersion,
       },
       devDependencies: {
         typescript: manifest.devDependencies.typescript,
@@ -148,7 +149,7 @@ for (const path of ${JSON.stringify(internalPaths)}) {
     stdio: "inherit",
   });
   console.log(
-    `Packed consumer passed: ${modules.length} public modules load, internal paths are blocked, NodeNext and Bundler declarations compile, and conversions/codecs round-trip.`,
+    `Packed consumer passed with Effect ${effectVersion}: ${modules.length} public modules load, internal paths are blocked, NodeNext and Bundler declarations compile, and conversions/codecs round-trip.`,
   );
 } finally {
   rmSync(consumer, { recursive: true, force: true });

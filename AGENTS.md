@@ -1,6 +1,6 @@
 # Repo Overview
 
-effect-units is a single-package TypeScript library providing typed quantities and unit conversions for Effect (requires Node >= 22, pnpm). It targets stable Effect v4: `effect` is pinned exactly in devDependencies and declared as `^4.0.3` in peerDependencies, and `@effect/vitest` is unified-versioned with it, so the two move together.
+effect-units is a single-package TypeScript library providing typed quantities and unit conversions for Effect (requires Node >= 22, pnpm). It targets stable Effect v4: `effect` is pinned exactly in devDependencies and declared as `^4.0.0` in peerDependencies, and `@effect/vitest` is unified-versioned with the development pin, so the two move together.
 
 ## Build System
 
@@ -10,7 +10,7 @@ The package is built with tsdown (JavaScript output; `dts: false` delegates decl
 
 - `pnpm build` - Build `dist/` (tsdown JavaScript + tsc declarations)
 - `pnpm test` - Run the Vitest suite (includes type-level tests and coverage)
-- `pnpm test:package` - Build and pack, install the tarball in an isolated consumer, and verify public/private exports, NodeNext/Bundler declarations, conversions, and JSON codecs
+- `pnpm test:package` - Build and pack, install the tarball in isolated consumers using Effect 4.0.0 and the development pin, and verify public/private exports, NodeNext/Bundler declarations, conversions, and JSON codecs
 - `pnpm typecheck` - Typecheck sources and tests via `tsc -b`
 - `pnpm lint`/`pnpm lint:fix` - Lint (Oxlint + Syncpack); `lint:fix` writes fixes
 - `pnpm format`/`pnpm format:check` - Format (Oxfmt + Syncpack); `format` writes, `format:check` only checks

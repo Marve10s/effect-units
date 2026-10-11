@@ -53,7 +53,7 @@
   "license": "BSD-3-Clause",
   "packageManager": "pnpm@11.10.0",
   "peerDependencies": {
-    "effect": "^4.0.3"
+    "effect": "^4.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -73,7 +73,7 @@
     "prepare": "node scripts/prepare.mjs",
     "release": "pnpm build && changeset publish",
     "test": "vitest run --coverage --typecheck",
-    "test:package": "pnpm build && node scripts/testPackage.mjs",
+    "test:package": "pnpm build && node scripts/testPackage.mjs 4.0.0 && node scripts/testPackage.mjs",
     "test:watch": "vitest",
     "typecheck": "tsc -b tsconfig.json",
     "version-packages": "changeset version && pnpm format"
