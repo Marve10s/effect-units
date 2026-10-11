@@ -54,4 +54,21 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup
-      - run: pnpm test:package
+      - run: pnpm build
+
+      - name: Prepare isolated package consumer
+        run: |
+          mkdir -p "$RUNNER_TEMP/effect-units-consumer"
+          cp test/consumer/* "$RUNNER_TEMP/effect-units-consumer/"
+          CI=1 pnpm pack --out "$RUNNER_TEMP/effect-units-consumer/effect-units.tgz"
+
+      - name: Test consumer with minimum Effect version
+        working-directory: ${{ runner.temp }}/effect-units-consumer
+        run: |
+          npm install --ignore-scripts --no-audit --no-fund --package-lock=false
+          npm test
+
+      - name: Test consumer with development Effect version
+        run: |
+          npm --prefix "$RUNNER_TEMP/effect-units-consumer" install --ignore-scripts --no-audit --no-fund --package-lock=false "effect@$(node -p 'require("./package.json").devDependencies.effect')"
+          npm --prefix "$RUNNER_TEMP/effect-units-consumer" test

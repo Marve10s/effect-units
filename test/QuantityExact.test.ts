@@ -14,6 +14,7 @@ import * as Schema from "effect/Schema";
 
 import { nonZeroRational, rational } from "./testUtilsExact.ts";
 import { double } from "./testUtils.ts";
+import { unitCases } from "./unitCases.ts";
 import * as QuantityExact from "../src/QuantityExact.ts";
 import * as DimensionlessExact from "../src/DimensionlessExact.ts";
 import * as Length from "../src/Length.ts";
@@ -259,6 +260,59 @@ describe("rates", () => {
 });
 
 describe("dimensionless", () => {
+  describe.each(unitCases)("generic factor recovery: $label", ({ unit }) => {
+    const compose = <U1 extends Unit.Unit, U2 extends Unit.Unit>(
+      a: QuantityExact.QuantityExact<U1>,
+      b: QuantityExact.QuantityExact<U2>,
+    ): QuantityExact.QuantityExact<Unit.Product<U1, U2>> =>
+      QuantityExact.times(a, b);
+
+    it.prop(
+      "recovers exact folded factors in safe, unsafe, and curried forms",
+      [nonZeroRational, rational],
+      ([value, factorValue]) => {
+        const quantity = QuantityExact.make(unit, value);
+        const factor = DimensionlessExact.fraction(factorValue);
+        const left = compose(factor, quantity);
+        const right = compose(quantity, factor);
+        const recovered: ReadonlyArray<DimensionlessExact.DimensionlessExact> =
+          [
+            Option.getOrThrow(QuantityExact.over(left, quantity)),
+            Option.getOrThrow(left.pipe(QuantityExact.over(quantity))),
+            QuantityExact.overUnsafe(left, quantity),
+            left.pipe(QuantityExact.overUnsafe(quantity)),
+            Option.getOrThrow(QuantityExact.over_(right, quantity)),
+            Option.getOrThrow(right.pipe(QuantityExact.over_(quantity))),
+            QuantityExact.over_Unsafe(right, quantity),
+            right.pipe(QuantityExact.over_Unsafe(quantity)),
+          ];
+
+        Array.forEach(recovered, (result) => {
+          assertTrue(Equal.equals(result, factor));
+          deepStrictEqual(
+            Schema.encodeSync(DimensionlessExact.DimensionlessExactFromStruct)(
+              result,
+            ),
+            Schema.encodeSync(DimensionlessExact.DimensionlessExactFromStruct)(
+              factor,
+            ),
+          );
+        });
+      },
+    );
+
+    it("keeps exact division by zero partial after folding", () => {
+      const zero = QuantityExact.make(unit, Rational.zero);
+      const left = compose(DimensionlessExact.one, zero);
+      const right = compose(zero, DimensionlessExact.one);
+
+      assertTrue(Option.isNone(QuantityExact.over(left, zero)));
+      assertTrue(Option.isNone(QuantityExact.over_(right, zero)));
+      throws(() => QuantityExact.overUnsafe(left, zero));
+      throws(() => QuantityExact.over_Unsafe(right, zero));
+    });
+  });
+
   const third = Rational.makeUnsafe(1n, 3n);
   const three = Rational.makeUnsafe(3n);
   const ten = Rational.makeUnsafe(10n);

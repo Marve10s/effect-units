@@ -10,7 +10,6 @@ The package is built with tsdown (JavaScript output; `dts: false` delegates decl
 
 - `pnpm build` - Build `dist/` (tsdown JavaScript + tsc declarations)
 - `pnpm test` - Run the Vitest suite (includes type-level tests and coverage)
-- `pnpm test:package` - Build and pack, install the tarball in isolated consumers using Effect 4.0.0 and the development pin, and verify public/private exports, NodeNext/Bundler declarations, conversions, and JSON codecs
 - `pnpm typecheck` - Typecheck sources and tests via `tsc -b`
 - `pnpm lint`/`pnpm lint:fix` - Lint (Oxlint + Syncpack); `lint:fix` writes fixes
 - `pnpm format`/`pnpm format:check` - Format (Oxfmt + Syncpack); `format` writes, `format:check` only checks
@@ -36,4 +35,4 @@ CI runs on pull requests and is reusable by the Release workflow. Each push to `
 
 Publishing uses npm trusted publishing (OIDC): `.github/workflows/release.yml` requests an `id-token` and `pnpm publish` exchanges it for a short-lived registry token, so there is no npm token in the repo or in Actions secrets. npm's trusted publisher config for the package pins the workflow filename, so `release.yml` cannot be renamed without updating it at https://www.npmjs.com/package/effect-units/access. Provenance attestations are generated automatically as part of trusted publishing.
 
-The published tarball is the `files` allowlist in `package.json` (`dist` plus `src`, so declaration maps resolve to sources) with `LICENSE`, `README.md`, and `package.json`. `dist` is gitignored but still ships, because `files` takes precedence. Internal files must stay in the tarball for relative imports, but `effect-units/internal` and `effect-units/internal/*` are blocked by the exports map. Verify a change to packaging with `pnpm test:package`, which runs `CI=1 pnpm pack` and tests the installed tarball rather than the source checkout.
+The published tarball is the `files` allowlist in `package.json` (`dist` plus `src`, so declaration maps resolve to sources) with `LICENSE`, `README.md`, and `package.json`. `dist` is gitignored but still ships, because `files` takes precedence. Internal files must stay in the tarball for relative imports, but `effect-units/internal` and `effect-units/internal/*` are blocked by the exports map. Verify packaging changes with the static fixture in `test/consumer`: its README gives the build, `CI=1 pnpm pack`, isolated install, and test commands used by CI. It tests every public module, blocked private imports, NodeNext/Bundler declarations, conversions, and JSON codecs with Effect 4.0.0 and the development pin. Keep the fixture outside the checkout when running it so repository dependencies cannot mask missing package dependencies.

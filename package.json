@@ -73,7 +73,6 @@
     "prepare": "node scripts/prepare.mjs",
     "release": "pnpm build && changeset publish",
     "test": "vitest run --coverage --typecheck",
-    "test:package": "pnpm build && node scripts/testPackage.mjs 4.0.0 && node scripts/testPackage.mjs",
     "test:watch": "vitest",
     "typecheck": "tsc -b tsconfig.json",
     "version-packages": "changeset version && pnpm format"
