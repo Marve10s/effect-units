@@ -10,11 +10,11 @@
     "@changesets/cli": "3.0.2",
     "@changesets/config": "4.0.0",
     "@effect/language-service": "0.87.1",
-    "@effect/vitest": "4.0.0-rc.117",
+    "@effect/vitest": "4.0.3",
     "@types/node": "26.1.1",
     "@vitest/coverage-v8": "5.0.0",
     "dpdm": "4.2.0",
-    "effect": "4.0.0-rc.117",
+    "effect": "4.0.3",
     "oxfmt": "0.58.0",
     "oxlint": "1.68.0",
     "syncpack": "15.3.2",
@@ -27,6 +27,8 @@
   },
   "exports": {
     "./package.json": "./package.json",
+    "./internal": null,
+    "./internal/*": null,
     "./*": {
       "types": "./dist/*.d.ts",
       "import": "./dist/*.js",
@@ -51,7 +53,7 @@
   "license": "BSD-3-Clause",
   "packageManager": "pnpm@11.10.0",
   "peerDependencies": {
-    "effect": "^4.0.0-rc.117"
+    "effect": "^4.0.3"
   },
   "publishConfig": {
     "access": "public"
@@ -71,6 +73,7 @@
     "prepare": "node scripts/prepare.mjs",
     "release": "pnpm build && changeset publish",
     "test": "vitest run --coverage --typecheck",
+    "test:package": "pnpm build && node scripts/testPackage.mjs",
     "test:watch": "vitest",
     "typecheck": "tsc -b tsconfig.json",
     "version-packages": "changeset version && pnpm format"

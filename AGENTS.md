@@ -1,6 +1,6 @@
 # Repo Overview
 
-effect-units is a single-package TypeScript library providing typed quantities and unit conversions for Effect (requires Node >= 22, pnpm). It targets Effect v4's release candidates: `effect` is pinned exactly in devDependencies and declared as `^4.0.0-rc.117` in peerDependencies, and `@effect/vitest` is unified-versioned with it, so the two move together.
+effect-units is a single-package TypeScript library providing typed quantities and unit conversions for Effect (requires Node >= 22, pnpm). It targets stable Effect v4: `effect` is pinned exactly in devDependencies and declared as `^4.0.3` in peerDependencies, and `@effect/vitest` is unified-versioned with it, so the two move together.
 
 ## Build System
 
@@ -10,6 +10,7 @@ The package is built with tsdown (JavaScript output; `dts: false` delegates decl
 
 - `pnpm build` - Build `dist/` (tsdown JavaScript + tsc declarations)
 - `pnpm test` - Run the Vitest suite (includes type-level tests and coverage)
+- `pnpm test:package` - Build and pack, install the tarball in an isolated consumer, and verify public/private exports, NodeNext/Bundler declarations, conversions, and JSON codecs
 - `pnpm typecheck` - Typecheck sources and tests via `tsc -b`
 - `pnpm lint`/`pnpm lint:fix` - Lint (Oxlint + Syncpack); `lint:fix` writes fixes
 - `pnpm format`/`pnpm format:check` - Format (Oxfmt + Syncpack); `format` writes, `format:check` only checks
@@ -20,7 +21,7 @@ The package is built with tsdown (JavaScript output; `dts: false` delegates decl
 
 - Import Effect modules from their submodule paths (e.g. `import * as Schema from "effect/Schema"`), not from bare `"effect"`—enforced for value imports by Oxlint's `no-restricted-imports` (type-only imports are exempt from the lint rule, but follow the convention anyway).
 - Tests live in `test/*.test.ts` and use `@effect/vitest`; shared test helpers live alongside them in `test/` (excluded from the build and coverage).
-- Property tests use `it.prop` (or `it.effect.prop` for Effects) with schemas or native `effect/unstable/arbitrary/Arbitrary` generators. Preserve numeric bounds and exclusions when composing generators, and configure run counts with `{ arbitrary: { runs } }`.
+- Property tests use `it.prop` (or `it.effect.prop` for Effects) with schemas or native `effect/Arbitrary` generators. Preserve numeric bounds and exclusions when composing generators, and configure run counts with `{ arbitrary: { runs } }`.
 - Source modules are PascalCase (one module per unit/quantity); helpers are camelCase.
 - Import Effect modules unaliased even when the name shadows a global (`import * as String from "effect/String"`), and reach for the built-in through `globalThis` (`globalThis.String(n)`, `globalThis.BigInt(n)`). Alias only to avoid shadowing a local export—`order` for `effect/Order` next to an exported `Order`, `Equivalence_` next to an exported `Equivalence`.
 - Schemas follow the Effect v4 convention: the bare name is the identity schema and `XFromY` is the codec, named for its encoded form (`Unit`/`UnitFromString`, `Length`/`LengthFromStruct`). There is no `FromSelf`—that was the v3 spelling, and v4 dropped it.
@@ -31,6 +32,8 @@ The package is built with tsdown (JavaScript output; `dts: false` delegates decl
 
 Versioning and changelogs are managed with Changesets. Use `pnpm changeset` to create a changeset before merging a PR with user-facing changes; the Release workflow opens/updates a "Version Packages" PR, and merging that PR publishes to npm, tags the release, and creates the GitHub release.
 
+CI runs on pull requests and is reusable by the Release workflow. Each push to `main` runs the same checks through Release; its publishing job depends on all checks passing, including the packed-consumer test.
+
 Publishing uses npm trusted publishing (OIDC): `.github/workflows/release.yml` requests an `id-token` and `pnpm publish` exchanges it for a short-lived registry token, so there is no npm token in the repo or in Actions secrets. npm's trusted publisher config for the package pins the workflow filename, so `release.yml` cannot be renamed without updating it at https://www.npmjs.com/package/effect-units/access. Provenance attestations are generated automatically as part of trusted publishing.
 
-The published tarball is the `files` allowlist in `package.json` (`dist` plus `src`, so declaration maps resolve to sources) with `LICENSE`, `README.md`, and `package.json`. `dist` is gitignored but still ships, because `files` takes precedence. Verify a change to packaging with `CI=1 pnpm pack`.
+The published tarball is the `files` allowlist in `package.json` (`dist` plus `src`, so declaration maps resolve to sources) with `LICENSE`, `README.md`, and `package.json`. `dist` is gitignored but still ships, because `files` takes precedence. Internal files must stay in the tarball for relative imports, but `effect-units/internal` and `effect-units/internal/*` are blocked by the exports map. Verify a change to packaging with `pnpm test:package`, which runs `CI=1 pnpm pack` and tests the installed tarball rather than the source checkout.

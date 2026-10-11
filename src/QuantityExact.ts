@@ -532,7 +532,7 @@ export const over: {
     b: QuantityExact<Unit.Unit>,
   ): Option.Option<QuantityExact<Unit.Unit>> =>
     Option.map(Rational.divide(a.value, b.value), (value) =>
-      make(isUnitless(b.unit) ? a.unit : leftFactorOf(a.unit), value),
+      make(isUnitless(b.unit) ? a.unit : leftFactorOf(a.unit, b.unit), value),
     ),
 );
 
@@ -565,7 +565,7 @@ export const overUnsafe: {
     b: QuantityExact<Unit.Unit>,
   ): QuantityExact<Unit.Unit> =>
     make(
-      isUnitless(b.unit) ? a.unit : leftFactorOf(a.unit),
+      isUnitless(b.unit) ? a.unit : leftFactorOf(a.unit, b.unit),
       Rational.divideUnsafe(a.value, b.value),
     ),
 );
@@ -604,7 +604,7 @@ export const over_: {
     b: QuantityExact<Unit.Unit>,
   ): Option.Option<QuantityExact<Unit.Unit>> =>
     Option.map(Rational.divide(a.value, b.value), (value) =>
-      make(isUnitless(b.unit) ? a.unit : rightFactorOf(a.unit), value),
+      make(isUnitless(b.unit) ? a.unit : rightFactorOf(a.unit, b.unit), value),
     ),
 );
 
@@ -637,7 +637,7 @@ export const over_Unsafe: {
     b: QuantityExact<Unit.Unit>,
   ): QuantityExact<Unit.Unit> =>
     make(
-      isUnitless(b.unit) ? a.unit : rightFactorOf(a.unit),
+      isUnitless(b.unit) ? a.unit : rightFactorOf(a.unit, b.unit),
       Rational.divideUnsafe(a.value, b.value),
     ),
 );

@@ -14,8 +14,15 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
+  checks:
+    name: Release checks
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
   release:
     name: Release
+    needs: checks
     runs-on: ubuntu-latest
     permissions:
       contents: write
