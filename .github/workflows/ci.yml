@@ -49,7 +49,7 @@ jobs:
       - run: pnpm test
 
   build:
-    name: Build and packed consumer
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
