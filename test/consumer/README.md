@@ -16,4 +16,4 @@ npm --prefix "$consumer" install --ignore-scripts --no-audit --no-fund --package
 npm --prefix "$consumer" test
 ```
 
-`public.mts` explicitly imports every public source module. The export test checks that this list matches the top-level JavaScript modules in the installed `dist`, so adding a module requires adding it to the fixture. Private imports must fail both TypeScript resolution modes and Node's runtime resolution; their files still have to ship for public modules' relative imports.
+`public.mts` explicitly imports every public source module. The export test checks that this list matches the top-level JavaScript modules in the installed `dist`, so adding a module requires adding it to the fixture. Private modules are discovered recursively from the installed `dist/internal`, with both extensionless and `.js` imports tested. A literal import checks the private namespace at compile time; the TypeScript resolver checks discovered paths in NodeNext and Bundler modes because computed imports are not statically resolved. All private paths must also fail Node's runtime resolution; their files still have to ship for public modules' relative imports.
