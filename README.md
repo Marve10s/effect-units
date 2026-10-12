@@ -1,6 +1,6 @@
 # effect-units
 
-Typed quantities and unit conversions for [Effect](https://effect.website), ported from Elm's [`ianmackenzie/elm-units`](https://package.elm-lang.org/packages/ianmackenzie/elm-units/latest/).
+Typed quantities and unit conversions for [Effect](https://effect.website), adapted from Elm's [`ianmackenzie/elm-units`](https://package.elm-lang.org/packages/ianmackenzie/elm-units/latest/).
 
 Store, pass around, convert between, compare, and do arithmetic on lengths, durations, speeds, temperatures, pixels, money, and dozens of other kinds of quantity—with the type system checking your units and your dimensional analysis at every step.
 
