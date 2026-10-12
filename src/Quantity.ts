@@ -747,7 +747,7 @@ export const over: {
   (a: Quantity<Unit.Unit>, b: Quantity<Unit.Unit>): Quantity<Unit.Unit> =>
     isUnitless(b.unit)
       ? make(a.unit, a.value / b.value)
-      : make(leftFactorOf(a.unit), a.value / b.value),
+      : make(leftFactorOf(a.unit, b.unit), a.value / b.value),
 );
 
 /**
@@ -784,7 +784,7 @@ export const over_: {
   (a: Quantity<Unit.Unit>, b: Quantity<Unit.Unit>): Quantity<Unit.Unit> =>
     isUnitless(b.unit)
       ? make(a.unit, a.value / b.value)
-      : make(rightFactorOf(a.unit), a.value / b.value),
+      : make(rightFactorOf(a.unit, b.unit), a.value / b.value),
 );
 
 // Dimensionless quantities

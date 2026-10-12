@@ -1,5 +1,5 @@
 import * as Schema from "effect/Schema";
-import * as Arbitrary from "effect/unstable/arbitrary/Arbitrary";
+import * as Arbitrary from "effect/Arbitrary";
 import { it } from "@effect/vitest";
 import { assertTrue } from "@effect/vitest/utils";
 import * as Array from "effect/Array";
@@ -7,6 +7,22 @@ import { pipe } from "effect/Function";
 
 import type * as Quantity from "../src/Quantity.ts";
 import * as Unit from "../src/Unit.ts";
+
+export const unitCases: ReadonlyArray<{
+  readonly label: string;
+  readonly unit: Unit.Unit;
+}> = (
+  [
+    "Unitless",
+    "Meters",
+    Unit.squared("Meters"),
+    Unit.cubed("Meters"),
+    Unit.product("Kilograms", Unit.rate("Meters", "Seconds")),
+    Unit.rate("Meters", "Seconds"),
+    Unit.product(Unit.custom("USD"), Unit.custom("Unitless")),
+    Unit.custom("Unitless"),
+  ] as const
+).map((unit) => ({ label: Unit.encode(unit), unit }));
 
 export interface Tolerance {
   readonly relativeTolerance?: number;

@@ -148,10 +148,10 @@ Nearly every unit module has an exact twin (`LengthExact`, `SpeedExact`, `Durati
 ## Install
 
 ```bash
-pnpm add effect-units effect@rc
+pnpm add effect-units effect
 ```
 
-`effect` is a peer dependency. This release targets Effect v4's release candidates—hence the `@rc` tag.
+`effect` is a peer dependency.
 
 ## Modules
 

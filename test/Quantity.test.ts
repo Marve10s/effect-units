@@ -15,9 +15,9 @@ import * as Function from "effect/Function";
 import * as Option from "effect/Option";
 import * as Schema from "effect/Schema";
 import * as SchemaTransformation from "effect/SchemaTransformation";
-import * as Arbitrary from "effect/unstable/arbitrary/Arbitrary";
+import * as Arbitrary from "effect/Arbitrary";
 
-import { isCloseTo, double } from "./testUtils.ts";
+import { isCloseTo, double, unitCases } from "./testUtils.ts";
 import * as Dimensionless from "../src/Dimensionless.ts";
 import * as Length from "../src/Length.ts";
 import * as Mass from "../src/Mass.ts";
@@ -429,6 +429,45 @@ describe("rates", () => {
 });
 
 describe("dimensionless", () => {
+  describe.each(unitCases)("generic factor recovery: $label", ({ unit }) => {
+    const compose = <U1 extends Unit.Unit, U2 extends Unit.Unit>(
+      a: Quantity.Quantity<U1>,
+      b: Quantity.Quantity<U2>,
+    ): Quantity.Quantity<Unit.Product<U1, U2>> => Quantity.times(a, b);
+
+    it.prop(
+      "recovers a folded factor on either side, including its schema",
+      [
+        Schema.Int.check(Schema.isBetween({ minimum: 1, maximum: 1000 })),
+        Schema.Int.check(Schema.isBetween({ minimum: -1000, maximum: 1000 })),
+      ],
+      ([value, factorValue]) => {
+        const quantity = Quantity.make(unit, value);
+        const divisor = Quantity.make(
+          Option.getOrThrow(Unit.decode(Unit.encode(unit))),
+          value,
+        );
+        const factor = Dimensionless.fraction(factorValue / 4);
+        const left = compose(factor, quantity);
+        const right = compose(quantity, factor);
+        const recovered: ReadonlyArray<Dimensionless.Dimensionless> = [
+          Quantity.over(left, divisor),
+          left.pipe(Quantity.over(divisor)),
+          Quantity.over_(right, divisor),
+          right.pipe(Quantity.over_(divisor)),
+        ];
+
+        Array.forEach(recovered, (result) => {
+          assertTrue(Equal.equals(result, factor));
+          deepStrictEqual(
+            Schema.encodeSync(Dimensionless.DimensionlessFromStruct)(result),
+            { unit: "Unitless", value: factor.value },
+          );
+        });
+      },
+    );
+  });
+
   it.prop(
     "ratio collapses same-unit division to Unitless",
     [double, nonZeroDouble],

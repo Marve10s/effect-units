@@ -5,7 +5,7 @@
  *
  * @module
  */
-import type * as Unit from "../Unit.ts";
+import * as Unit from "../Unit.ts";
 
 /**
  * The dimensionless leaf, and only that leaf: a `Unit.custom("Unitless")`
@@ -29,11 +29,13 @@ const isProduct = (
  * from code generic in its units—see `Quantity`'s note on {@link
  * isUnitless}). Dividing such a quantity by its right factor leaves the
  * factor that was folded, which was `Unitless` by construction: undoing the
- * fold rather than reaching for a `left` that isn't there.
+ * fold rather than reaching for a `left` that isn't there. If the surviving
+ * unit is itself a product, equality with the divisor identifies the fold
+ * before either of that product's own factors can be selected.
  */
-export const leftFactorOf = (unit: Unit.Unit): Unit.Unit =>
-  isProduct(unit) ? unit.left : "Unitless";
+export const leftFactorOf = (unit: Unit.Unit, right: Unit.Unit): Unit.Unit =>
+  isProduct(unit) && !Unit.equals(unit, right) ? unit.left : "Unitless";
 
 /** The right factor of a product unit—{@link leftFactorOf} mirrored. */
-export const rightFactorOf = (unit: Unit.Unit): Unit.Unit =>
-  isProduct(unit) ? unit.right : "Unitless";
+export const rightFactorOf = (unit: Unit.Unit, left: Unit.Unit): Unit.Unit =>
+  isProduct(unit) && !Unit.equals(unit, left) ? unit.right : "Unitless";
