@@ -1,5 +1,16 @@
 # effect-units
 
+## 0.5.0
+
+### Minor Changes
+
+- 69408c3: Block `effect-units/internal` and `effect-units/internal/*` package imports. Internal files still ship so the public modules' relative imports continue to work; only direct consumer access through private package subpaths is removed.
+- 69408c3: Require stable Effect v4 (`^4.0.0`) instead of Effect v4 release candidates.
+
+### Patch Changes
+
+- 69408c3: Recover dimensionless factors correctly when generic multiplication folds them into an area or another product unit. Fix both float and exact `over` / `over_` operations, including curried and unsafe forms, without changing public signatures or wire formats.
+
 ## 0.4.2
 
 ### Patch Changes
