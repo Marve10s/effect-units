@@ -13,8 +13,7 @@ import * as Option from "effect/Option";
 import * as Schema from "effect/Schema";
 
 import { nonZeroRational, rational } from "./testUtilsExact.ts";
-import { double } from "./testUtils.ts";
-import { unitCases } from "./unitCases.ts";
+import { double, unitCases } from "./testUtils.ts";
 import * as QuantityExact from "../src/QuantityExact.ts";
 import * as DimensionlessExact from "../src/DimensionlessExact.ts";
 import * as Length from "../src/Length.ts";

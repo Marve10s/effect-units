@@ -17,8 +17,7 @@ import * as Schema from "effect/Schema";
 import * as SchemaTransformation from "effect/SchemaTransformation";
 import * as Arbitrary from "effect/Arbitrary";
 
-import { isCloseTo, double } from "./testUtils.ts";
-import { unitCases } from "./unitCases.ts";
+import { isCloseTo, double, unitCases } from "./testUtils.ts";
 import * as Dimensionless from "../src/Dimensionless.ts";
 import * as Length from "../src/Length.ts";
 import * as Mass from "../src/Mass.ts";
